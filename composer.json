@@ -1,0 +1,25 @@
+{
+    "name": "bspd/app",
+    "description": "bspd website",
+    "type": "project",
+    "version": "0.1.1",
+    "require": {
+        "prokerala/astrology-sdk": "^0.5.1",
+        "nyholm/psr7": "^1.3",
+        "php-http/message-factory": "^1.0",
+        "guzzlehttp/guzzle": "^7.1",
+        "guzzlehttp/psr7": "^1.7",
+	"illuminate/database": "^8.62",
+        "illuminate/events": "^8.62"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "BSPD",
+            "email": "kommu.srividya@gmail.com"
+        }
+    ]
+}
