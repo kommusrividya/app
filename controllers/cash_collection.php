@@ -46,26 +46,28 @@ $collector_filter = "AND
 `L`.`Collector_ID` = ".$_SESSION['id']."";
 if($_SESSION['permission'] & CASH_DESK_ADMIN) $collector_filter = "";
 $sql = "SELECT 
-            `L`.*, 
-            `M`.`Alias` as `Cont_Alias`,
-            `M2`.`Alias` as `Coll_Alias`
+            *
         FROM
-            `Temp_SBOX_GNCD_Log` `L` JOIN `SBOX_Member` `M` JOIN `SBOX_Member` `M2`
+            Temp_SBOX_GNCD_Log
         WHERE
-            `L`.`Contributer_ID` = `M`.`MEMBER_ID` AND
-            `L`.`Collector_ID` = `M2`.`MEMBER_ID` AND
-            `L`.`Status` = 'entered' $collector_filter 
+            Status = 'entered' $collector_filter 
         ORDER BY SrNo DESC;";
 $query = mysqli_query($link_test, $sql);
 $members = array();
 
 while($row = mysqli_fetch_array($query))
 {
+    $query1 = mysqli_query($link, "SELECT Alias as Cont_Alias FROM BSPD_Member WHERE MEMBER_ID = ".$row["Contributer_ID"].";");
+    $row1 = mysqli_fetch_array($query1);
+
+    $query2 = mysqli_query($link, "SELECT Alias as Coll_Alias FROM BSPD_Member WHERE MEMBER_ID = ".$row["Collector_ID"].";");
+    $row2 = mysqli_fetch_array($query2);
+
     $member = new stdClass();
     $member->sno = $row["SrNo"];
     $member->id = $row["Contributer_ID"];
-    $member->colname = $row['Coll_Alias'];
-    $member->conname = $row['Cont_Alias'];
+    $member->colname = $row2['Coll_Alias'];
+    $member->conname = $row1['Cont_Alias'];
     $member->event = $row["EVENT_ID"];
     $member->amount = $row["Amount"];
     $member->notes = $row["Notes"];     
