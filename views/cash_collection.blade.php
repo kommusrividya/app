@@ -42,6 +42,7 @@ require_once "$APPDIR/ssdbconfig.php"?>
         <!-- <div id = "result"></div> -->
     </div>
     @if($_SESSION['permission'] & CASH_DESK_ADD || $_SESSION['permission'] & CASH_DESK_ADMIN)
+    <input type="hidden" id="curr_event_id" value="{{ $curr_event_id }}">
     <form class = "form-horizontal" method="POST" id="cash_collection_form">
         <div class="col-md-10 mx-auto">
             <div class="form-group row">
@@ -77,64 +78,120 @@ require_once "$APPDIR/ssdbconfig.php"?>
         </div>
     </form>
     @endif
+
+    
+    
     <div class="col-md-10 mx-auto">
+    <div class="form-group row">
+            <div class="col-sm-6" style="font-size:20px;">
+                <b>Total : <input type="text" size="3" value="{{ $sum }}" id="amount_total" style="border:0;" disabled></b>
+            </div>
+    </div>
+        <div class="form-group row">
+            <div class="col-sm-2">
+                <label class = "label-control">Starting row</label>
+                <input type = "number" class = "form-control" name = "amount" id = "start" placeholder="">
+            </div>
+            <div class="col-sm-2">
+                <label class = "label-control">Ending row</label>
+                <input type = "number" class = "form-control" name = "amount" id = "end" placeholder="">
+            </div>
+            <div class="col-sm-2">
+                <label class = "label-control">Action</label>
+                <button class="btn btn-success" id="calc_total">Calculate Total</button>
+            </div>
+            <div class="col-sm-1">
+                <label class = "label-control">Amount</label>
+                <span id="sum"></span>
+            </div>
+        </div>
         <form class = "form-horizontal" method="POST" id="contribution_edit_form">
             <div class="form-group row">
                 <div class="col-sm-6">
                     
                 </div>
             </div>
-        <table class="table table-bordered table-condensed table-responsive" >
-            <tr>
-                <th>Amount </th>
-                @if($_SESSION['permission'] & CASH_DESK_ADD || $_SESSION['permission'] & CASH_DESK_ADMIN)
-                <th><button id="editmembercontribution" class = "btn btn-success">Edit</button>
-                    <!-- <button id="deletemembercontribution" class = "btn btn-danger">Delete</button> -->
-                </th>
-                @endif
-                <th>Contributor</th>
-                <th>SNo </th>
-                <!-- <th>ID </th> -->
-                <!-- <th>Collector Name </th> -->
-                
-                <!-- <th>Event </th> -->
-                
-                <th>Notes</th>
-            </tr>
-            <?php $total = 0; ?>
-            @foreach($members as $member)
-            <?php $total += $member->amount ?>
-            <tr>
-                <td><input type="text" value="{{ $member->amount }}" style="border:0;" size="3" disabled id="amount{{ $member->sno }}"></td>
-                @if($_SESSION['permission'] & CASH_DESK_ADD || $_SESSION['permission'] & CASH_DESK_ADMIN)
-                <td><input type="radio" name="membersno" value="{{ $member->sno }}"></td>
-                @endif
-                <td><input type="text" value="{{ $member->conname }}" style="border:0;" disabled size=15 id="memberconname{{ $member->sno }}"></td>
-                <td><input type="text" value="{{ $member->sno }}" style="border:0;" size="3" disabled id="sno{{ $member->sno }}"></td>
-                <input type="hidden" value="{{ $member->id }}" style="border:0;" size="3" disabled id="memberid{{ $member->sno }}">
-                <!-- <td><input type="text" value="{{ $member->colname }}" style="border:0;" disabled id="membercolname{{ $member->sno }}"></td> -->
-                <input type="hidden" value="{{ $member->event }}" style="border:0;" size="3" disabled id="event_id{{ $member->sno }}">
-                <td><input type="text" value="{{ $member->notes }}" style="border:0;" size="3" disabled id="note{{ $member->sno }}"></td>
-                
-            </tr>
-            @endforeach
-        </table>
+            <table class="table table-bordered table-condensed table-responsive" >
+                <tr>
+                    <th>Amount </th>
+                    @if($_SESSION['permission'] & CASH_DESK_ADD || $_SESSION['permission'] & CASH_DESK_ADMIN)
+                    <th><button id="editmembercontribution" class = "btn btn-success">Edit</button>
+                        <button id="deletemembercontribution" class = "btn btn-danger">Delete</button>
+                    </th>
+                    @endif
+                    <th>Contributor</th>
+                    <th>SNo </th>
+                    <!-- <th>ID </th> -->
+                    <!-- <th>Collector Name </th> -->
+                    
+                    <!-- <th>Event </th> -->
+                    
+                    <th>Notes</th>
+                </tr>
+                @foreach($members as $member)
+                <tr>
+                    <td><input type="text" value="{{ $member->amount }}" style="border:0;" size="3" disabled id="amount{{ $member->sno }}"></td>
+                    @if($_SESSION['permission'] & CASH_DESK_ADD || $_SESSION['permission'] & CASH_DESK_ADMIN)
+                    <td><input type="radio" name="membersno" value="{{ $member->sno }}"></td>
+                    @endif
+                    <td><input type="text" value="{{ $member->conname }}" style="border:0;" disabled size=15 id="memberconname{{ $member->sno }}"></td>
+                    <input type="hidden" value="{{ $member->sno }}" style="border:0;" size="3" disabled id="sno{{ $member->sno }}">
+                    <td>{{ $cont_count }}</td>
+                    <input type="hidden" value="{{ $member->id }}" style="border:0;" size="3" disabled id="memberid{{ $member->sno }}">
+                    <!-- <td><input type="text" value="{{ $member->colname }}" style="border:0;" disabled id="membercolname{{ $member->sno }}"></td> -->
+                    <input type="hidden" value="{{ $member->event }}" style="border:0;" size="3" disabled id="event_id{{ $member->sno }}">
+                    <input type="hidden" value="{{ $member->amount }}" style="border:0;" size="3" disabled id="seqno{{ $cont_count }}">
+                    <td><input type="text" value="{{ $member->notes }}" style="border:0;" size="3" disabled id="note{{ $member->sno }}"></td>
+                <?php $cont_count--; ?>    
+                </tr>
+                @endforeach
+            </table>
 
         </form>
+
+        
+
         <div class="form-group row">
-            <div class="col-sm-6" style="font-size:30px;">
-                <b>Total : {{ $total }}</b>
+            <div class="col-sm-3">
+                <h4><b>cash box breakup</b></h4>
+                <table class="table table-condensed table-bordered">
+                    <?php $i = 0; ?>
+                    @foreach($names as $name)
+                        <tr>
+                            <td>{{ $name }}</td>
+                            <input type="hidden" value="{{ substr($name, 1, strlen($name)) }}" id="deno{{ $i }}">
+                            <td><input type = "text" id="count{{ $i }}" size="3" value = "{{ $denominations[$i] }}"></td>
+                            <td><input type = "text" id="amount{{ $i }}" size="3" disabled></td>
+                        </tr>
+                        <?php $i++; ?>
+                    @endforeach
+                    <input type="hidden" id="denocount" value="{{$i}}">
+                </table>
             </div>
         </div>
+        <div class="form-group row">
+        <div class="col-sm-2">
+            <button align="right" type="button" class="btn btn-success" id="calc_denom">Calculate</button>
+        </div>
+        <div class="col-sm-6">
+            <span id="denototal" style="font-size:20px;"></span>
+        </div>
+        </div>
+
+        @include('member_search')
 
         @if($_SESSION['permission'] & PERM_CRUD)
         <div class="form-group row">
-            <div class="col-sm-2">
-                <button align="right" type="button" class="btn btn-success" id="cash_record_generate">Generate Cash Records</button>
+            <div class="col-sm-6">
+                <button align="right" type="button" class="btn btn-success" id="preview">Preview Cash records for upload</button>
+            </div>
+            <div class="col-sm-6">
+                <button align="right" type="button" class="btn btn-success" id="cash_record_generate">Update cash contirbution to database</button>
             </div>
         </div>
         @endif
-        @include('member_search')
+        
+
     </div>
 
 </div>

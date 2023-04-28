@@ -65,6 +65,11 @@ get('/app/idcard','controllers/id_card.php');
 get('/app/vbnames','controllers/voucherbill_names.php');
 get('/app/printid2','controllers/print_id2.php');
 get('/app/financialsummary', 'controllers/fy_financial_summary.php');
+any('/app/uploadstatement', 'controllers/ssSIBCollectiondata.php');
+any('/app/paymentconfirmation', 'controllers/payment_confirmation.php');
+get('/app/challan', 'controllers/cash_challan.php');
+get('/app/voucherlist', 'controllers/voucherlist.php');
+get('/app/vamsavruksham', 'controllers/vamsa_vruksham.php');
 
 
 

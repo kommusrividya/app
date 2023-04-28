@@ -1385,6 +1385,72 @@ $(document).ready(function () {
         $("#note").val(note);
     });
 
+    $("#calc_total").on('click', function(event){
+        // event.preventDefault();
+        console.log('calc_total');
+
+        let start = $("#start").val();
+        let end = $("#end").val();
+        let sum = 0;
+
+        if(start < 0 || end < 0) {alert("Start and ending serial number must be greater than 0"); return;}
+
+        //console.log("Edit clicked")
+
+        for(let i=start; i<=end; i++) {
+            let amount = $("#seqno"+i).val();
+            sum += +amount;
+        }
+        console.log('sum',sum);
+        $("#sum").empty();
+        $("#sum").append(sum);
+    });
+
+    $("#calc_denom").on('click', function(event){
+       let denocount = $("#denocount").val();
+       let total_amount = 0;
+       let event_id = $("#curr_event_id").val();
+
+       let qty_arr = [];
+        for(let i = 0; i < denocount ; i++) {
+            let deno = +$(`#deno${i}`).val();
+            let qty = +$(`#count${i}`).val();
+            qty_arr.push(qty);
+            $(`#amount${i}`).val(deno*qty);
+            total_amount += +(deno*qty);
+        }
+        $("#denototal").empty();
+        $("#denototal").append("Total: " + total_amount);
+
+        if(+$('#amount_total').val() == total_amount)$("#denototal").append(" matched."); 
+        else if(+$('#amount_total').val() > total_amount) $("#denototal").append(" cash box shows lesser amount");
+        else if(+$('#amount_total').val() < total_amount) $("#denototal").append(" cash box shows higher amount");
+
+        var formdata = {
+            qty_arr: qty_arr,
+            event_id: event_id,
+            save_denomination: 1,
+        };
+
+        result = $.ajax({
+            type: "POST",
+            url: "controllers/jquery_process.php",
+            data: formdata,
+        });
+
+        result.done(function (response) {
+            // location.reload();
+            // alert(response);
+        });
+
+        result.fail(function (jqXHR, textStatus, errorThrown) {
+            console.log("fail");
+            location.reload();
+        });
+
+    });
+
+
     $("#deletemembercontribution").on('click', function (event) {
         event.preventDefault();
 
@@ -1461,6 +1527,33 @@ $(document).ready(function () {
         result.done(function (response) {
             location.reload();
             alert(response);
+        });
+
+        result.fail(function (jqXHR, textStatus, errorThrown) {
+            console.log("fail");
+            location.reload();
+        });
+    });
+
+    $("#cash_record_generate").prop('disabled', true);
+
+    $("#preview").on('click', function () {
+        console.log('Preview clicked');
+        var formdata = {
+            preview : 1,
+        };
+
+        result = $.ajax({
+            type: "POST",
+            url: "controllers/jquery_process.php",
+            data: formdata,
+        });
+
+        result.done(function (response) {
+            // location.reload();
+            $('#result').empty();
+            $('#result').append(response);
+            $("#cash_record_generate").prop('disabled', false);
         });
 
         result.fail(function (jqXHR, textStatus, errorThrown) {

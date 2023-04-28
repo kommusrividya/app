@@ -1601,11 +1601,11 @@ if(isset($_POST['cash_collection_form'])) {
 	$amount = $_POST["amount"];
 	$note = $_POST["note"];
 
-	$sql = "SELECT * FROM BSPD_Member WHERE MEMBER_ID = $memberid";
+	$sql = "SELECT * FROM BSPD_Member WHERE MEMBER_ID = $memberid and Status = 'Active'";
 	$query = mysqli_query($link, $sql);
 
 	if(mysqli_num_rows($query) <= 0) {
-		echo "Invalid Member ID";
+		echo "Invalid/Inactive/Duplicate Member ID.";
 		return;
 	}
 
@@ -1629,28 +1629,54 @@ if(isset($_POST['cash_collection_form'])) {
 
 }
 
+if(isset($_POST['preview'])) {
+	$sql = "SELECT * FROM Temp_SBOX_GNCD_Log WHERE Status = 'entered' order by SrNo";
+	$result = mysqli_query($link_test, $sql);
+	$output = "";
+	$i = 1;
+	$output .= "<table class='table table-condensed'>";
+	$output .= "<tr><td>Contributor</td><td>Event ID</td><td>Amount</td><td>Mode</td><td>Create Date</td><td>Reference</td><td>Approved</td><td>Created By</td></tr>";
+
+	while($row = mysqli_fetch_array($result)) {
+		$output .= "<tr>";
+		$output .= "<td>".$row['Contributer_ID']."</td>";
+		$output .= "<td>".$row['EVENT_ID']."</td>";
+		$output .= "<td>".$row['Amount']."</td>";
+		$output .= "<td>CASH</td>";
+		$output .= "<td>".$row['CreatedDate']."</td>";
+		$output .= "<td>CASH DESK ".str_pad($i,3,"0",STR_PAD_LEFT)."</td>";
+		$output .= "<td>Y</td>";
+		$output .= "<td>".$_SESSION['id']."</td>";
+		$output .= "</tr>";
+
+		$i++;
+	}
+	$output .= "</table>";
+	 echo $output;
+}
+
 if(isset($_POST['cash_record_generate'])) {
 	$sql = "SELECT * FROM Temp_SBOX_GNCD_Log WHERE Status = 'entered' order by SrNo";
 	$result = mysqli_query($link_test, $sql);
 	$i = 1;
 
 	while($row = mysqli_fetch_array($result)) {
-		$sql1 = "INSERT INTO `urf_sandbox`.`SBOX_Member_Contribution` (`Member_id`, `EVENT_ID`, `Amount`, `Contribution_Type`, `Contribution_Date`, `Reference_Details`, `Approved`, `CreatedBy`) 
+		$sql1 = "INSERT INTO BSPD_Member_Contribution (`Member_id`, `EVENT_ID`, `Amount`, `Contribution_Type`, `Contribution_Date`, `Reference_Details`, `Approved`, `CreatedBy`) 
     		VALUES ('" . $row['Contributer_ID'] . "', '" . $row['EVENT_ID'] . "', '" . $row['Amount'] . "', 'CASH', '" . $row['CreatedDate'] . "', 'CASH DESK " . str_pad($i,3,"0",STR_PAD_LEFT) . "', 'Y', '".$_SESSION['id']."');";
 
-			if (mysqli_query($link_test, $sql1)) { 
-				$transaction_id = mysqli_insert_id($link_test);
+			if (mysqli_query($link, $sql1)) { 
+				$transaction_id = mysqli_insert_id($link);
 				$type="BSPDHYDContributionReceipt";
 				$encrypted_id = EncryptDetails($link, $transaction_id, $type);
 				$Receipt_PDF_URL = "http://www.bspd.in/app/receiptgenerate?id=$encrypted_id";
-				$sql2 = "UPDATE SBOX_Member_Contribution SET Receipt_PDF_URL = '$Receipt_PDF_URL' WHERE Transaction_Code = $transaction_id";
-				if(mysqli_query($link_test, $sql2));
-				else echo "ERROR " . mysqli_error($link_test);
+				$sql2 = "UPDATE BSPD_Member_Contribution SET Receipt_PDF_URL = '$Receipt_PDF_URL' WHERE Transaction_Code = $transaction_id";
+				if(mysqli_query($link, $sql2));
+				else echo "ERROR " . mysqli_error($link);
 				$sql3 = "UPDATE Temp_SBOX_GNCD_Log SET Status = 'reconciled' WHERE SrNo = ".$row['SrNo'].";";
 				if(mysqli_query($link_test, $sql3));
 				else echo "ERROR " . mysqli_error($link_test);
 			}
-			else echo "ERROR " . mysqli_error($link_test);
+			else echo "ERROR " . mysqli_error($link);
 			$i++;
 	}
 	echo "Receipts generated succesfully.";
@@ -1834,7 +1860,7 @@ if(isset($_POST['searchfield']))
 {
 	  $search = $_POST['searchfield'];
 	  $output = "";
-      $sql = "SELECT * FROM BSPD_Member where Alias like '%$search%' or MEMBER_ID like '%$search%' or Phone_Num like '%$search%' or Email_ID like '%$search%' LIMIT 25;";
+      $sql = "SELECT * FROM BSPD_Member where (Alias like '%$search%' or MEMBER_ID like '%$search%' or Phone_Num like '%$search%' or Email_ID like '%$search%') and Status = 'Active' LIMIT 25;";
       $result = mysqli_query($link, $sql);
 	  $output.= "<table class='table table-condensed table-bordered>'";
 	  $output.= "<tr><th>Name</th><th>Email</th><th>Phno</th></tr>";  
@@ -1848,4 +1874,27 @@ if(isset($_POST['searchfield']))
       }
 	  $output.= "</table>";
 	  echo $output;
+}
+
+if(isset($_POST['save_denomination'])) {
+	$qty_arr = $_POST['qty_arr'];
+	$event_id = $_POST['event_id'];
+
+	$sql = "SELECT * FROM `urf_sandbox`.`Temp_SBOX_CashHandOver` WHERE EVENT_ID = '$event_id'";
+	$result = mysqli_query($link_test, $sql);
+
+	if(mysqli_num_rows($result) > 0) {
+		$sql = "UPDATE `urf_sandbox`.`Temp_SBOX_CashHandOver` SET `N2000` = '".$qty_arr[0]."', `N500` = '".$qty_arr[1]."', `N200` = '".$qty_arr[2]."', `N100` = '".$qty_arr[3]."', `N50` = '".$qty_arr[4]."', `N20` = '".$qty_arr[5]."', `N10` = '".$qty_arr[6]."', `N5` = '".$qty_arr[7]."', `N2` = '".$qty_arr[8]."', `N1` = '".$qty_arr[9]."', `C10` = '".$qty_arr[10]."', `C5` = '".$qty_arr[11]."', `C2` = '".$qty_arr[12]."', `C1` = '".$qty_arr[13]."' WHERE (`EVENT_ID` = '$event_id');";
+		if(mysqli_query($link_test, $sql)) {
+			echo "Denominations updated successfully";
+		}
+		else echo "Error $event_id".mysqli_error($link_test);
+	}
+	else{
+		$sql = "INSERT INTO `urf_sandbox`.`Temp_SBOX_CashHandOver` (`EVENT_ID`, `N2000`, `N500`, `N200`, `N100`, `N50`, `N20`, `N10`, `N5`, `N2`, `N1`, `C10`, `C5`, `C2`, `C1`) VALUES ('$event_id', '".$qty_arr[0]."', '".$qty_arr[1]."', '".$qty_arr[2]."', '".$qty_arr[3]."', '".$qty_arr[4]."', '".$qty_arr[5]."', '".$qty_arr[6]."', '".$qty_arr[7]."', '".$qty_arr[8]."', '".$qty_arr[9]."', '".$qty_arr[10]."', '".$qty_arr[11]."', '".$qty_arr[12]."', '".$qty_arr[13]."');";
+		if(mysqli_query($link_test, $sql)) {
+			echo "Denominations inserted successfully";
+		}
+		else echo "Error $event_id".mysqli_error($link_test);
+	}
 }

@@ -33,6 +33,8 @@ $result = mysqli_query($link, $sql);
 $row = mysqli_fetch_array($result);
 
 $heading = "Report Contribution " . $row['EVENT_ID'];
+
+$curr_event_id = $row['EVENT_ID'];
 $result = mysqli_query($link, $sql);
 while($row = mysqli_fetch_array($result))
 {
@@ -54,6 +56,9 @@ $sql = "SELECT
         ORDER BY SrNo DESC;";
 $query = mysqli_query($link_test, $sql);
 $members = array();
+$cont_count = mysqli_num_rows($query);
+
+$sum = 0;
 
 while($row = mysqli_fetch_array($query))
 {
@@ -72,7 +77,35 @@ while($row = mysqli_fetch_array($query))
     $member->amount = $row["Amount"];
     $member->notes = $row["Notes"];     
     $members[] = $member;
+    $sum += $member->amount;
 }
+
+$sql = "select COLUMN_NAME
+from INFORMATION_SCHEMA.COLUMNS
+where TABLE_NAME='Temp_SBOX_CashHandOver' and COLUMN_NAME != 'EVENT_ID'";
+
+$result = mysqli_query($link_test, $sql);
+$name = [];
+
+while( $row = mysqli_fetch_array($result) ) {
+    array_push($name, $row['COLUMN_NAME']);
+}
+
+$sql = "SELECT * FROM Temp_SBOX_CashHandOver WHERE EVENT_ID = '$curr_event_id'";
+$query = mysqli_query($link_test, $sql);
+
+
+$denominations = [];
+$denominations = array_fill(0,sizeof($name),0);
+if(mysqli_num_rows($query) > 0) {
+    $deno_row = mysqli_fetch_array($query);
+    for( $i = 0 ; $i < sizeof($name) ; $i++ ) {
+        // echo $deno_row[$name[$i]];
+        $denominations[$i] = $deno_row[$name[$i]];
+    }
+}
+
+
 
 try {
     echo $blade->run("cash_collection"
@@ -81,9 +114,11 @@ try {
     ,  'collector_id' => $_SESSION['id']
     ,  'collector_name' => $_SESSION['name']
     ,   "members" => $members
-    
-
-
+    ,   'sum' => $sum
+    ,   'names' => $name
+    ,   'cont_count' => $cont_count
+    ,   'curr_event_id' => $curr_event_id
+    ,   'denominations'=> $denominations
 ]);
 } catch (Exception $e) {
     echo "error found ".$e->getMessage()."<br>".$e->getTraceAsString();
