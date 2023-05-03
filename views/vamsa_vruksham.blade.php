@@ -88,7 +88,10 @@ if($link === false){
         //printing the spouse
             if($id!=0)
             {
-                    echo "--";
+                    echo "<br>";
+                    for($i=0;$i<$count-1;$i++)
+                        echo "<span style='color:white;'>|---</span>";
+                    if($count != 0) echo "<span style='color:white;'>|--></span>";
                     $query = " SELECT Alias FROM bspdhyd_wp1.BSPD_Member where MEMBER_ID = $id;";
                     
                     $Family=mysqli_query($link,$query);

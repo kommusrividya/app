@@ -132,6 +132,7 @@ require_once "$APPDIR/ssdbconfig.php"?>
                 <li><a class="dropdown-item" href="idcard">ID Card</a></li>
                 <li><a class="dropdown-item" href="memberupdate">Member Update</a></li>
                 <li><a class="dropdown-item" href="changepassword">Change password</a></li>
+                <li><a class="dropdown-item" href="vamsavruksham">Vamsa Vruksham</a></li>
                 <li><a class="dropdown-item" href="requestvan">My VAN details</a></li>
                 <li><a class="dropdown-item" href="controllers/ssLogout.php"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                 </ul>

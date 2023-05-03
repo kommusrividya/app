@@ -26,7 +26,7 @@ class myBlade extends  BladeOne {
 
 $blade=new myBlade($views,$compiledFolder);
 
-$heading = "Voucher List";
+
 
 $sql = "SELECT EVENT_ID, Event_date, Event_Description FROM BSPD_Event where Event_status = 0 and Event_ID like 'CH%' order by Event_date desc;";
 $result = mysqli_query($link, $sql);
@@ -34,6 +34,8 @@ $row = mysqli_fetch_array($result);
 
 $qpl="SELECT Voucher_Num,Name,Sub_Category,Amount_Details FROM bspdhyd_wp1.BSPD_View_Expense_Report where EVENT_ID='".$row['EVENT_ID']."';";
 $result=mysqli_query($link, $qpl);
+
+$heading = "Voucher List ".$row['EVENT_ID'];
 
 $vouchers = array();
 

@@ -32,7 +32,7 @@
 
 <div class="container">
     <div class="row">
-        <h3>{{ $heading }}</h3>
+        <h3 align="center">{{ $heading }}</h3>
     </div>
     <div>
         <table class="table table-bordered table-condensed">
