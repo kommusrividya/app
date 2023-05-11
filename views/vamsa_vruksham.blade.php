@@ -48,6 +48,8 @@ if($link === false){
     <?php
         $memberid=$_SESSION['id'];
         $count=0;
+         //                            #Lred     #Lgreen  #Lorange  #Lpurple   #Lmaroon  #Lblue                         
+         $color=array("aqua","yellow","#ff9999","#90EE90","#FFD580","#ff80ff", "#ff3377","#aa80ff", "navy", "olive", "purple", "red", "silver", "teal", "white", "yellow");
         $root = $_SESSION['id'];
         $root = rootid($memberid, $link);
 
@@ -67,9 +69,9 @@ if($link === false){
     <h1>Family tree of <?php echo $_SESSION['name'];?></h1>
 
     <?php
-        FamilyTree($root,$link,$count);
+        FamilyTree($root,$link,$count,$color);
 
-        function FamilyTree($memberid,$link,$count)
+        function FamilyTree($memberid,$link,$count,$color)
         {
 
         // ------------------------------------------------------------------------------------------//
@@ -81,7 +83,8 @@ if($link === false){
         // ------------------------------------------------------------------------------------------//
 
         //Printing the memberid
-        echo $row["Alias"];   
+        echo "<span style='background-color:$color[$count]';>".$row["Alias"]."</span>";   
+   
         $id=$row["Spouse_ID"];
 
         // ------------------------------------------------------------------------------------------//
@@ -93,7 +96,8 @@ if($link === false){
                     
                     $Family=mysqli_query($link,$query);
                     $row=mysqli_fetch_array($Family); 
-                    echo $row["Alias"]; 
+                    echo "<span style='background-color:$color[$count]';>".$row["Alias"]."</span>";   
+ 
             }
         
         // ------------------------------------------------------------------------------------------//
@@ -124,7 +128,7 @@ if($link === false){
                         echo "|---";
                     echo "|-->";
                     $id=$row["MEMBER_ID"];
-                    FamilyTree($id,$link,$count);
+                    FamilyTree($id,$link,$count,$color);
                 }
                 $count-=1;
             }
