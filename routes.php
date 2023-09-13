@@ -70,6 +70,7 @@ any('/app/paymentconfirmation', 'controllers/payment_confirmation.php');
 get('/app/challan', 'controllers/cash_challan.php');
 get('/app/voucherlist', 'controllers/voucherlist.php');
 get('/app/vamsavruksham', 'controllers/vamsa_vruksham.php');
+get('/app/payeemanagement', 'controllers/payee_account_management.php');
 
 
 

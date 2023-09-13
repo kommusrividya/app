@@ -130,6 +130,7 @@
                     <input type = "text" class = "form-control" name = "link" id = "link" required>
                 </div>
             </div>
+            <input type="hidden" value="create" id="mode">
             <div class="form-group row">
                 <div class="col-sm-6">
                     <input type="submit" name="submit" id="submit" value="Submit" class = "btn btn-success">
@@ -138,6 +139,28 @@
             </div>
         </div>
     </form>
+
+
+    <table class="table table-bordered table-condensed table-responsive" >
+            <tr>
+                <td>PID</td>
+                <td>MID</td>
+                <td>Name</td>
+                <td>Phone Number</td>
+                <td>Email</td>
+                <td></td>
+            </tr>
+            @foreach($payees as $payee)
+                <tr>
+                    <td>{{ $payee->id }}</td>
+                    <td>{{ $payee->memid }}</td>
+                    <td>{{ $payee->name }}</td>
+                    <td>{{ $payee->phno }}</td>
+                    <td>{{ $payee->email }}</td>
+                    <td><button id="{{$payee->id}}" class="payee_edit btn btn-primary">Edit</button></td>
+                </tr>
+            @endforeach
+    </table>
 </div>
 </body>
 </html>

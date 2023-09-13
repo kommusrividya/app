@@ -39,12 +39,12 @@
                     <td>
                         <table width=354 height=206 style="color:red; background-color:yellow;">
                             <tr>
-                                <td><img src="http://www.bspd.in/app/kamakshiimage.jpg" width="100" height="100" class="css-class" alt="alt text"></td>
-                                <td align="center"><span style="color:red; font-size:16px;"><b>BSPD<br><img src="http://www.bspd.in/app/vatuvu_agni.jpg" width="60" height="80" class="css-class" alt="alt text"></b></span></td>
-                                <td align = "right"><img src="http://www.bspd.in/app/swamiimage.jpg" width="100" height="100" class="css-class" alt="alt text"></td></tr>
-                            <tr><td colspan="3" align = "center" style="font-size:16px;"><b>{{ $member->id }} {{ $member->surname }} {{ $member->name }} - {{ $member->gotra }}
+                                <td><img src="http://localhost/app/kamakshiimage.jpg" width="100" height="100" class="css-class" alt="alt text"></td>
+                                <td align="center"><span style="color:red; font-size:16px;"><b><img src="http://localhost/app/memberphotos/{{ $member->id }}.jpg" width="40" height="53" class="css-class" alt="alt text"><br>MemId: {{ $member->id }} </b></span></td>
+                                <td align = "right"><img src="http://localhost/app/swamiimage.jpg" width="100" height="100" class="css-class" alt="alt text"></td></tr>
+                            <tr><td colspan="3" align = "center" style="font-size:16px;"><b>{{ $member->surname }} {{ $member->name }} - {{ $member->gotra }}
                             </b></td></tr>
-                            <tr><td colspan="3" align = "center"><b><span style="color:red; font-size:18px;">Brahmana Sabha ( Pancha Dravida )</span></b></td></tr>
+                            <tr><td colspan="3" align = "center"><b><span style="color:red; font-size:18px;">Brahmana Sabha ( Pancha Dravida )</span><br><span style="color:red; font-size:12px;">bspd.hyd@gmail.com Hyderabad</span></b></td></tr>
                         </table>
                     </td>
                 <?php 

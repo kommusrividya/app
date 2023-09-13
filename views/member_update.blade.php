@@ -57,11 +57,11 @@
             <div class="form-group row">
                 <div class="col-sm-4">
                     <label class = "label-control">Name</label>
-                    <input type = "text" class = "form-control" name = "first_name" id = "first_name" disabled>
+                    <input type = "text" class = "form-control" name = "first_name" id = "first_name" <?php if(!($_SESSION['permission'] & MEMBER_U_ANY)) echo "disabled"; ?>>
                 </div>
                 <div class="col-sm-4">
                     <label class = "label-control">Surname</label>
-                    <input type = "text" class = "form-control" name = "last_name" id = "last_name" disabled>
+                    <input type = "text" class = "form-control" name = "last_name" id = "last_name" <?php if(!($_SESSION['permission'] & MEMBER_U_ANY)) echo "disabled"; ?>>
                 </div>
                 <div class="col-sm-4">
                     <label class = "label-control">Year of Birth</label>

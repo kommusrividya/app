@@ -12,7 +12,7 @@ include "$APPDIR/vendors/bladeone/lib/BladeOneHtmlBootstrap.php";
 
 require_once "$APPDIR/constant.php";
 require_once "$APPDIR/ssdbconfig.php";
-//require_once "$APPDIR/sessiontimout.php";
+
 
 use eftec\bladeone\BladeOne;
 use eftec\bladeone\BladeOneHtml;
@@ -26,29 +26,9 @@ class myBlade extends  BladeOne {
 
 $blade=new myBlade($views,$compiledFolder);
 
-$heading = "Payee Create";
-
-$sql = "SELECT * FROM BSPD_Payee order by Payee_ID desc;";
-$result = mysqli_query($link, $sql);
-$payees = array();
-
-while($row = mysqli_fetch_array($result))
-{
-    $payee = new stdClass();
-    $payee->id = $row["Payee_ID"];
-    $payee->memid = $row["MEMBER_ID"];
-    $payee->name = $row["Name"];
-    $payee->email = $row["Email_ID"];
-    $payee->phno = $row["Phone_Num"];
-    $payees[] = $payee;
-}
-
 try {
-    echo $blade->run("payee"
-    , ['heading' => $heading
-    ,  'payees' => $payees
-
-]);
+    echo $blade->run("upload_photo"
+    , [ ]);
 } catch (Exception $e) {
     echo "error found ".$e->getMessage()."<br>".$e->getTraceAsString();
 }

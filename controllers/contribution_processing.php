@@ -37,12 +37,15 @@ while($row = mysqli_fetch_array($result))
 {
     $event1 = "";
     $str = substr($row['EVENT_ID'], 0, 2);
+    $source = $row['SOURCE'];
     
     if($str == 'GN') $event1 = 'GN';
     if($str == 'CP') $event1 = 'CP';
     if($str == 'CH') $event1 = $ch_event;
     if($str == 'BV') $event1 = 'BVCY2023';
-    
+
+    if($source == "UPI") $event1 = $ch_event;
+
     $record = new stdClass();
     $record->SrNo = $row['SrNo'];
     $record->Member_id = $row['Member_id'];

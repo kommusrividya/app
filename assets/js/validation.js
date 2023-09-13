@@ -609,6 +609,40 @@ $(document).ready(function () {
                 var payee = $("#payee").val();
                 $("#nick_name").val("P"+payee.padStart(5, '0') +" "+ myObj[0].Payee_Name);
                 $("#brc").empty();
+
+
+                //Add rows
+                var table = document.getElementById("payee_account_table");
+                var tbody = table.getElementsByTagName('tbody')[0];
+                tbody.innerHTML = '';
+
+                var table = document.getElementById("payee_account_table").getElementsByTagName('tbody')[0];
+
+                for (var i = 0; i < myObj.length; i++) {
+                   
+                    var row = table.insertRow(table.rows.length); // Insert a row at the end of the table
+
+                    var cell1 = row.insertCell(0); // Insert a cell in the new row at index 0
+                    cell1.innerHTML = myObj[i].Payee_Acnt_Num; // Set the content of cell 1
+
+                    var cell2 = row.insertCell(1); // Insert a cell in the new row at index 1
+                    cell2.innerHTML = myObj[i].Bank_Name; // Set the content of cell 2
+                    
+                    var cell3 = row.insertCell(2); 
+                    cell3.innerHTML = myObj[i].IFSC_CODE; // Set the content of cell 3
+                    
+                    var cell3 = row.insertCell(3); 
+                    cell3.innerHTML = myObj[i].Bank_Registration_Code; // Set the content of cell 3
+
+                    var cell3 = row.insertCell(4);  // Insert a cell in the new row at index 2
+                    cell3.innerHTML = myObj[i].Account_Status;
+
+                    var cell3 = row.insertCell(5);  // Insert a cell in the new row at index 2
+                    cell3.innerHTML = "<button id='"+ myObj[i].sno +"' class='payeeaccountedit btn btn-primary'>Edit</button>";
+                }
+
+                //end add rows
+                
                 //$("#brc").append("<option>Choose one</option>");
                 for (var i = 0; i < myObj.length; i++) {
                     $("#brc").append("<option value='" + myObj[i].Bank_Registration_Code + "'>"
@@ -1270,6 +1304,9 @@ $(document).ready(function () {
         var answer = confirm("Do you wish to reset password for "+$("#membersearch").val()+" "+name+"?");
         if(answer);
         else return;
+
+        $("#submit").prop('disabled', true);
+
         var formdata = {
             member_id: $("#membersearch").val(),
             password_reset_form: 1,
@@ -1315,6 +1352,7 @@ $(document).ready(function () {
             city: $("#city").val(),
             state: $("#state").val(),
             country: $("#country").val(),
+            mode: $("#mode").val(),
             payee_form: 1,
         };
 
@@ -1325,8 +1363,9 @@ $(document).ready(function () {
         });
 
         result.done(function (response) {
-            //location.reload();
+            location.reload();
             alert(response);
+            $("#mode").val("create");
             //$("#result").append("<div class = 'alert alert-success'>Event created successfully</div>");
         });
 
@@ -1348,6 +1387,9 @@ $(document).ready(function () {
             bank_branch: $("#bank_branch").val(),
             ifsc: $("#ifsc").val(),
             link: $("#link").val(),
+            barc: $("#barc").val(),
+            account_status: $("#account_status").val(),
+            mode: $("#mode").val(),
             payee_accnt_form: 1,
         };
 
@@ -1802,4 +1844,72 @@ $(document).ready(function () {
             },
         });
     });
+
+    $(".payee_edit").on('click', function (event) {
+        event.preventDefault();
+        console.log('edit cclicked');
+        var payeeId = $(this).attr('id')
+
+        $.ajax({
+            url: "controllers/jquery_process.php",
+            type: "POST",
+            datatype: "json",
+            data: {
+                "payeeId": payeeId,
+                "get_payee" : 1,
+            },
+            success: function (response) {
+                // $("#result").append(response);
+                let res = JSON.parse(response);
+                $("#name").val(res.Name);
+                $("#govtid_type").val(res.Govt_ID);
+                $("#govtid").val(res.Govt_ID_Num);
+                $("#Phone_Num").val(res.Phone_Num);
+                $("#email").val(res.Email_ID);
+                $("#address1").val(res.Address1);
+                $("#address2").val(res.Address2);
+                $("#city").val(res.City);
+                $("#state").val(res.State);
+                $("#country").val(res.Country);
+                $("#link").val(res.Aadhar_Img_URL);
+                $("#mode").val(res.Payee_ID);
+            },
+        });
+
+
+    })
+
+    $("#payee_account_table tbody").on("click", ".payeeaccountedit", function(event) {
+        event.preventDefault();
+        var sno = $(this).attr('id');
+        console.log("Sending AJAX request with sno: " + sno);
+
+        $.ajax({
+            url: "controllers/jquery_process.php",
+            type: "POST",
+            datatype: "json",
+            data: {
+                "sno": sno,
+                "get_payee_account" : 1,
+            },
+            success: function (response) {
+                // $("#result").append(response);
+                console.log(response);
+                let res = JSON.parse(response);
+                $("#name_in_accnt").val(res.Name_In_Account);
+                $("#accnt_num").val(res.Payee_Acnt_Num);
+                $("#bank_name").val(res.Bank_Name);
+                $("#bank_branch").val(res.Branch);
+                $("#ifsc").val(res.IFSC_CODE);
+                $("#link").val(res.Passbook_Img_URL);
+                $("#barc").val(res.Bank_Registration_Code);
+                $("#account_status").val(res.Account_Status);
+                $("#barc").prop('disabled', false);
+                $("#account_status").prop('disabled', false);
+                $("#mode").val(res.Sequence4BankRegCode);
+            },
+        });
+
+
+    })
 });

@@ -291,11 +291,13 @@ if (isset($_POST["member_update_form"])) {
 	$updated_by = $_SESSION['id'];
 
 	$message = "";
-	/** 	`Surname` = '$last_name', 
-	 * `Name` = '$first_name',
-	 * `Phone_Num` = '$Phone_Num',*/
+	//  	`Surname` = '$last_name', 
+	// `Name` = '$first_name',
+	// `Phone_Num` = '$Phone_Num',
 
 	$sql = "UPDATE BSPD_Member SET 
+	`Surname` = '$last_name', 
+	`Name` = '$first_name',
 	`Year_Of_Birth` = '$yob', 
 	`Gotram_ID` = '$gotra', 
 	`Nakshatra` = $nakshatra, 
@@ -505,7 +507,7 @@ function DecryptDetails($link, $value)
 
 if (isset($_POST["bank_reg"])) {
 	$search = mysqli_real_escape_string($link, $_POST['payee_id']);
-	$sql = "SELECT * FROM BSPD_Payee_Account where Payee_ID = '$search' and Account_Status = 'Active';";
+	$sql = "SELECT * FROM BSPD_Payee_Account where Payee_ID = '$search' and Account_Status in ('Active', 'Upload');";
 	
 	$sql1 = "SELECT * FROM BSPD_Payee where Payee_ID = '$search'";
 	$query1 = mysqli_query($link, $sql1);
@@ -527,7 +529,9 @@ if (isset($_POST["bank_reg"])) {
 				'Payee_Acnt_Num' => $Payee_Acnt_Num,
 				'Bank_Registration_Code' => $row['Bank_Registration_Code'],
 				'Bank_Name' => $row['Bank_Name'],
-				'Branch' => $row['Branch']
+				'Branch' => $row['Branch'],
+				'Account_Status' => $row['Account_Status'],
+				'sno' => $row['Sequence4BankRegCode'],
 			);
 			$i++;
 		}
@@ -1537,23 +1541,37 @@ if (isset($_POST['payee_form'])) {
 	$country = $_POST["country"];
 	$created_by = $_SESSION['id'];
 	$sql = "";
+	$mode = $_POST['mode'];
 
-	$sql1 = "SELECT * FROM BSPD_Payee where Phone_Num = $Phone_Num ;";
-	$query1 = mysqli_query($link, $sql1);
-	if(mysqli_num_rows($query1) > 0)
-	{
-		echo "Another payee has the same phone number.\nAvoiding payee creation due to possible duplicate entry.";
-		return;
+	if($mode == "create") {
+	
+		$sql1 = "SELECT * FROM BSPD_Payee where Phone_Num = $Phone_Num ;";
+		$query1 = mysqli_query($link, $sql1);
+		if(mysqli_num_rows($query1) > 0)
+		{
+			echo "Another payee has the same phone number.\nAvoiding payee creation due to possible duplicate entry.";
+			return;
+		}
+
+		$sql = "INSERT INTO BSPD_Payee (`Name`, `MEMBER_ID`, `Aadhar_Img_URL`, `Govt_ID`, `Govt_ID_Num`, `Email_ID`, `Phone_Num`, `Address1`, `Address2`, `City`, `State`, `Country`, `Created_By`) 
+		VALUES ('$name', '$MEMBER_ID', '$link_aadhar', '$govtid_type', '$govtid', '$email', '$Phone_Num', '$address1', '$address2', '$city', '$state', '$country', '$created_by');";
+
+		$query = mysqli_query($link, $sql);
+		if($query)
+			echo "Inserted successfully";
+		else
+			echo mysqli_error($link);
 	}
 
-	$sql = "INSERT INTO BSPD_Payee (`Name`, `MEMBER_ID`, `Aadhar_Img_URL`, `Govt_ID`, `Govt_ID_Num`, `Email_ID`, `Phone_Num`, `Address1`, `Address2`, `City`, `State`, `Country`, `Created_By`) 
-	VALUES ('$name', '$MEMBER_ID', '$link_aadhar', '$govtid_type', '$govtid', '$email', '$Phone_Num', '$address1', '$address2', '$city', '$state', '$country', '$created_by');";
+	else {
+		$sql = "UPDATE BSPD_Payee SET Name = '$name', Aadhar_Img_URL = '$link_aadhar', `Govt_ID` = '$govtid_type', `Govt_ID_Num` = '$govtid', `Email_ID` = '$email', `Phone_Num` = '$Phone_Num', `Address1` = '$address1', `Address2` = '$address2', `City` = '$city', `State`='$state', `Country` = '$country' WHERE Payee_ID = $mode;";
+		$result = mysqli_query($link, $sql);
 
-	$query = mysqli_query($link, $sql);
-	if($query)
-		echo "Inserted successfully";
-	else
-		echo mysqli_error($link);
+		if($result) 
+			echo "Payee $name updated successfully";
+		else
+			echo mysqli_error($link);
+	}
 
 }
 
@@ -1581,16 +1599,31 @@ if(isset($_POST['payee_accnt_form'])) {
 	$bank_branch = $_POST['bank_branch'];
 	$ifsc = $_POST['ifsc'];
 	$link_passbook = $_POST['link'];
+	$barc = $_POST['barc'];
+	$account_status = $_POST['account_status'];
+	$mode = $_POST['mode'];
 	$type = "PayeeBankAccountNumber";
 	$encryptednum = EncryptDetails($link, $accnt_num, $type);
 
-	$sql = "INSERT INTO BSPD_Payee_Account (Payee_ID, IFSC_CODE, Passbook_Img_URL, Payee_Acnt_Num, Name_In_Account, Bank_Name, Branch, Nick_Name) " ."SELECT " 
-  . $payee . ",'" . $ifsc . "', '" . $link_passbook ."', '" . $encryptednum. "', '" . $name_in_accnt . "', '" . $bank_name . "',  '" . $bank_branch . "',  '" . $nickname . "'";
+	if($mode == "create"){
+			$sql = "INSERT INTO BSPD_Payee_Account (Payee_ID, IFSC_CODE, Passbook_Img_URL, Payee_Acnt_Num, Name_In_Account, Bank_Name, Branch, Nick_Name) " ."SELECT " 
+		. $payee . ",'" . $ifsc . "', '" . $link_passbook ."', '" . $encryptednum. "', '" . $name_in_accnt . "', '" . $bank_name . "',  '" . $bank_branch . "',  '" . $nickname . "'";
 
-  $query = mysqli_query($link, $sql);
-  if($query)
-	echo "Payee Account created successfully";
-	else echo mysqli_error($link);
+		$query = mysqli_query($link, $sql);
+		if($query)
+			echo "Payee Account created successfully";
+			else echo mysqli_error($link);
+	}
+
+	else {
+		$sql = "UPDATE BSPD_Payee_Account SET Payee_ID = $payee, IFSC_CODE = '$ifsc', Passbook_Img_URL='$link_passbook', Payee_Acnt_Num='$accnt_num', Name_In_Account='$name_in_accnt', Bank_Name='$bank_name', Branch='$bank_branch', Nick_Name='$nickname', Account_Status='$account_status', Bank_Registration_Code='$barc' WHERE Sequence4BankRegCode= $mode;";
+		$result = mysqli_query($link, $sql);
+
+		if($result) 
+			echo "Payee account updated successfully";
+		else
+			echo mysqli_error($link);
+	}
 
 }
 
@@ -1897,4 +1930,29 @@ if(isset($_POST['save_denomination'])) {
 		}
 		else echo "Error $event_id".mysqli_error($link_test);
 	}
+}
+
+if(isset($_POST['get_payee'])) {
+	$id = $_POST['payeeId'];
+	
+	$sql = "SELECT * from BSPD_Payee where Payee_ID = $id";
+	$result = mysqli_query($link, $sql);
+
+	$row = mysqli_fetch_array($result);
+
+	echo json_encode($row);
+}
+
+if(isset($_POST['get_payee_account'])) {
+	$sno = $_POST['sno'];
+
+	$sql = "SELECT * from BSPD_Payee_Account where Sequence4BankRegCode = $sno";
+	$result = mysqli_query($link, $sql);
+	$row = mysqli_fetch_array($result);
+	
+	$value = $row['Payee_Acnt_Num'];
+	$Payee_Acnt_Num = DecryptDetails($link, $value);
+	$row['Payee_Acnt_Num'] = $Payee_Acnt_Num;
+
+	echo json_encode($row);
 }

@@ -12,7 +12,7 @@ include "$APPDIR/vendors/bladeone/lib/BladeOneHtmlBootstrap.php";
 
 require_once "$APPDIR/constant.php";
 require_once "$APPDIR/ssdbconfig.php";
-//require_once "$APPDIR/sessiontimout.php";
+require_once "$APPDIR/sessiontimeout.php";
 
 use eftec\bladeone\BladeOne;
 use eftec\bladeone\BladeOneHtml;
@@ -26,7 +26,7 @@ class myBlade extends  BladeOne {
 
 $blade=new myBlade($views,$compiledFolder);
 
-$heading = "Payee Create";
+$heading = "Payee Management";
 
 $sql = "SELECT * FROM BSPD_Payee order by Payee_ID desc;";
 $result = mysqli_query($link, $sql);
@@ -44,7 +44,7 @@ while($row = mysqli_fetch_array($result))
 }
 
 try {
-    echo $blade->run("payee"
+    echo $blade->run("payee_account_management"
     , ['heading' => $heading
     ,  'payees' => $payees
 

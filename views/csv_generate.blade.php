@@ -79,6 +79,7 @@
     </form>
     </div>
     <div id = "result"></div>
+    <a href="" id="link1" download="Payment CSV.csv">Download Payment CSV</a>
     
 </div>
 <script>
@@ -88,6 +89,15 @@
       document.getElementById('link').onclick = function(code) 
 		{
       this.href = 'data:text/plain;charset=utf-11,' + encodeURIComponent(txt.innerText);
+        };
+      };
+
+      window.onload = function() 
+	  {
+	  var result = document.getElementById('result');
+      document.getElementById('link1').onclick = function(code) 
+		{
+      this.href = 'data:text/plain;charset=utf-11,' + encodeURIComponent(result.innerText);
         };
       };
  

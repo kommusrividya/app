@@ -81,6 +81,20 @@
                     <label class = "label-control">Pass Book Link</label>
                     <input type="text" class = "form-control" name = "link" id = "link">
                 </div>
+                
+                <div class="col-sm-4">
+                    <label class = "label-control">Bank Registration Code</label>
+                    <input type="text" class = "form-control" name = "barc" id = "barc" disabled>
+                </div>
+                <div class="col-sm-2">
+                    <label class = "label-control">Ac Status</label>
+                    <select id="account_status" class = "form-control" name="account_status" disabled>
+                        <option>Upload</option>
+                        <option>Active</option>
+                        <option>Inactive</option>
+                    </select>
+                </div>
+                <input type="hidden" id="mode" value="create">
             </div>
             <div class="form-group row">
                 <div class="col-sm-6">
@@ -90,6 +104,21 @@
             </div>
         </div>
     </form>
+
+    <table class="table table-bordered table-condensed table-responsive" id="payee_account_table">
+        <thead>
+            <tr>
+                <th>Account Number</th>
+                <th>Bank Name</th>
+                <th>IFSC</th>
+                <th>Bank Reg Code</th>
+                <th>Account Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 </div>
 </body>
 </html>

@@ -117,9 +117,9 @@ require_once "$APPDIR/ssdbconfig.php"?>
                   <li><a class="dropdown-item" href="bankstatementreview">Bank Statement Review</a></li>
                   @endif
                   <li><a class="dropdown-item" href="paymentconfirmation">Payment Confirmation</a></li>
-                  <li><a class="dropdown-item" href="challan">Cash Challan</a></li>
+                  <li><a class="dropdown-item" href="challan">Cash Challannn</a></li>
+                  <li><a class="dropdown-item" href="payeemanagement">Payee Management</a></li>                 
                   <li><a class="dropdown-item" href="voucherlist">Voucher List</a></li>   
-                  <li><a class="dropdown-item" href="vamsavruksham">Vamsa Vruksham</a></li>                   
                 </ul>
               </li>
             </ul>

@@ -42,7 +42,7 @@ $sql = "SELECT
             WHERE
             `m`.`MEMBER_ID` = `r`.`MEMBER_ID` AND
             `m`.`Gotram_ID` = `g`.`PG_ID` AND
-            `r`.`EVENT_ID` = 'GN0012' AND
+            `r`.`EVENT_ID` = 'GN0019' AND
             `r`.`Registered` = 'Y'
             ORDER BY
             `m`.`Surname`, `m`.`Name`;";
