@@ -1616,7 +1616,7 @@ if(isset($_POST['payee_accnt_form'])) {
 	}
 
 	else {
-		$sql = "UPDATE BSPD_Payee_Account SET Payee_ID = $payee, IFSC_CODE = '$ifsc', Passbook_Img_URL='$link_passbook', Payee_Acnt_Num='$accnt_num', Name_In_Account='$name_in_accnt', Bank_Name='$bank_name', Branch='$bank_branch', Nick_Name='$nickname', Account_Status='$account_status', Bank_Registration_Code='$barc' WHERE Sequence4BankRegCode= $mode;";
+		$sql = "UPDATE BSPD_Payee_Account SET Payee_ID = $payee, IFSC_CODE = '$ifsc', Passbook_Img_URL='$link_passbook', Payee_Acnt_Num='$encryptednum', Name_In_Account='$name_in_accnt', Bank_Name='$bank_name', Branch='$bank_branch', Nick_Name='$nickname', Account_Status='$account_status', Bank_Registration_Code='$barc' WHERE Sequence4BankRegCode= $mode;";
 		$result = mysqli_query($link, $sql);
 
 		if($result) 

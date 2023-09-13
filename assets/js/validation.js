@@ -610,6 +610,11 @@ $(document).ready(function () {
                 $("#nick_name").val("P"+payee.padStart(5, '0') +" "+ myObj[0].Payee_Name);
                 $("#brc").empty();
 
+                if($("#payee_accnt_form").length) {
+                    $("#payee_accnt_form")[0].reset();
+                    $("#mode").val("create");
+                }
+
 
                 //Add rows
                 var table = document.getElementById("payee_account_table");

@@ -29,22 +29,24 @@
     <div class="row">
         <h3>CSV for Payee Registration at South Indian Bank</h3>
     </div>
-    <div>
+    <div id="payeecsv">
         FILEHDR|BSPDBSPD|245<br>
         @foreach ($records as $record)
             {{ $record->T1 }},{{ $record->T2 }},{{$record->T3}},{{$record->Name_In_Account}},{{$record->Nick_Name}},{{$record->T6}},{{$record->Payee_Acnt_Num}},{{$record->T8}},{{$record->T9}},{{$record->T10}},{{$record->T11}},{{$record->T12}},{{$record->T13}},{{$record->T14}},{{$record->T15}},{{$record->IFSC_CODE}}<br>
         @endforeach
     </div>
+    <a href="" id="link2" download="Payee CSV.csv">Download Payee CSV</a>
     <div class="row">
         <h3>Bulk Payment Upload CSV</h3>
     </div>
-    <div>
-        <h4>Event count: {{ $event_count }} Record count: {{ $rec_count }} Total Amount: {{ $total_amount }}</h4>
+    <h4>Event count: {{ $event_count }} Record count: {{ $rec_count }} Total Amount: {{ $total_amount }}</h4>
+    <div id="paymentcsv">
         FILEHDR|BSPDBSPD|120<br>
         @foreach ($records1 as $record)
             {{ $record->Dum1 }},{{ $record->reg_code }},{{$record->Dum2}},{{$record->Amount}},{{$record->Name}}<br>
         @endforeach
     </div>
+    <a href="" id="link1" download="Payment CSV.csv">Download Payment CSV</a>
     <div>
         <h3>Bulk Payment Upload Bank Branch CSV</h3>
     </div>
@@ -79,7 +81,6 @@
     </form>
     </div>
     <div id = "result"></div>
-    <a href="" id="link1" download="Payment CSV.csv">Download Payment CSV</a>
     
 </div>
 <script>
@@ -94,12 +95,23 @@
 
       window.onload = function() 
 	  {
-	  var result = document.getElementById('result');
+	  var result = document.getElementById('paymentcsv');
       document.getElementById('link1').onclick = function(code) 
 		{
       this.href = 'data:text/plain;charset=utf-11,' + encodeURIComponent(result.innerText);
         };
       };
+
+      window.onload = function() 
+	  {
+	  var result = document.getElementById('payeecsv');
+      document.getElementById('link2').onclick = function(code) 
+		{
+      this.href = 'data:text/plain;charset=utf-11,' + encodeURIComponent(result.innerText);
+        };
+      };
+
+      
  
     main();
 </script>
