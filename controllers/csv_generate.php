@@ -101,6 +101,11 @@ while($row = mysqli_fetch_array($result))
     $records2[] = $record2;
 }
 
+$sql = "SELECT pay_count from counters where sno = 1";
+$result = mysqli_query($link_test, $sql);
+$row = mysqli_fetch_array($result);
+$pay_count = $row['pay_count'];
+
 $currentDate = date('d/m/Y');
 $currentDate1 = date('Ymd');
 // echo $currentDate;
@@ -118,6 +123,7 @@ try {
     ,  'records2' => $records2
     ,  'currentDate' => $currentDate
     ,  'currentDate1' => $currentDate1
+    ,  'pay_count' => $pay_count
 ]);
 } catch (Exception $e) {
     echo "error found ".$e->getMessage()."<br>".$e->getTraceAsString();

@@ -30,7 +30,7 @@
         <h3>CSV for Payee Registration at South Indian Bank</h3>
     </div>
     <div id="payeecsv">
-        FILEHDR|BSPDBSPD|245<br>
+        FILEHDR|BSPDBSPD|{{ $pay_count }}<br>
         @foreach ($records as $record)
             {{ $record->T1 }},{{ $record->T2 }},{{$record->T3}},{{$record->Name_In_Account}},{{$record->Nick_Name}},{{$record->T6}},{{$record->Payee_Acnt_Num}},{{$record->T8}},{{$record->T9}},{{$record->T10}},{{$record->T11}},{{$record->T12}},{{$record->T13}},{{$record->T14}},{{$record->T15}},{{$record->IFSC_CODE}}<br>
         @endforeach
@@ -41,7 +41,7 @@
     </div>
     <h4>Event count: {{ $event_count }} Record count: {{ $rec_count }} Total Amount: {{ $total_amount }}</h4>
     <div id="paymentcsv">
-        FILEHDR|BSPDBSPD|120<br>
+        FILEHDR|BSPDBSPD|{{ $pay_count }}<br>
         @foreach ($records1 as $record)
             {{ $record->Dum1 }},{{ $record->reg_code }},{{$record->Dum2}},{{$record->Amount}},{{$record->Name}}<br>
         @endforeach
