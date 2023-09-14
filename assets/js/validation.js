@@ -617,33 +617,35 @@ $(document).ready(function () {
 
 
                 //Add rows
-                var table = document.getElementById("payee_account_table");
-                var tbody = table.getElementsByTagName('tbody')[0];
-                tbody.innerHTML = '';
+                if($("table#payee_account_table").length) {
+                    var table = document.getElementById("payee_account_table");
+                    var tbody = table.getElementsByTagName('tbody')[0];
+                    tbody.innerHTML = '';
 
-                var table = document.getElementById("payee_account_table").getElementsByTagName('tbody')[0];
+                    var table = document.getElementById("payee_account_table").getElementsByTagName('tbody')[0];
 
-                for (var i = 0; i < myObj.length; i++) {
-                   
-                    var row = table.insertRow(table.rows.length); // Insert a row at the end of the table
-
-                    var cell1 = row.insertCell(0); // Insert a cell in the new row at index 0
-                    cell1.innerHTML = myObj[i].Payee_Acnt_Num; // Set the content of cell 1
-
-                    var cell2 = row.insertCell(1); // Insert a cell in the new row at index 1
-                    cell2.innerHTML = myObj[i].Bank_Name; // Set the content of cell 2
+                    for (var i = 0; i < myObj.length; i++) {
                     
-                    var cell3 = row.insertCell(2); 
-                    cell3.innerHTML = myObj[i].IFSC_CODE; // Set the content of cell 3
-                    
-                    var cell3 = row.insertCell(3); 
-                    cell3.innerHTML = myObj[i].Bank_Registration_Code; // Set the content of cell 3
+                        var row = table.insertRow(table.rows.length); // Insert a row at the end of the table
 
-                    var cell3 = row.insertCell(4);  // Insert a cell in the new row at index 2
-                    cell3.innerHTML = myObj[i].Account_Status;
+                        var cell1 = row.insertCell(0); // Insert a cell in the new row at index 0
+                        cell1.innerHTML = myObj[i].Payee_Acnt_Num; // Set the content of cell 1
 
-                    var cell3 = row.insertCell(5);  // Insert a cell in the new row at index 2
-                    cell3.innerHTML = "<button id='"+ myObj[i].sno +"' class='payeeaccountedit btn btn-primary'>Edit</button>";
+                        var cell2 = row.insertCell(1); // Insert a cell in the new row at index 1
+                        cell2.innerHTML = myObj[i].Bank_Name; // Set the content of cell 2
+                        
+                        var cell3 = row.insertCell(2); 
+                        cell3.innerHTML = myObj[i].IFSC_CODE; // Set the content of cell 3
+                        
+                        var cell3 = row.insertCell(3); 
+                        cell3.innerHTML = myObj[i].Bank_Registration_Code; // Set the content of cell 3
+
+                        var cell3 = row.insertCell(4);  // Insert a cell in the new row at index 2
+                        cell3.innerHTML = myObj[i].Account_Status;
+
+                        var cell3 = row.insertCell(5);  // Insert a cell in the new row at index 2
+                        cell3.innerHTML = "<button id='"+ myObj[i].sno +"' class='payeeaccountedit btn btn-primary'>Edit</button>";
+                    }
                 }
 
                 //end add rows
@@ -658,7 +660,6 @@ $(document).ready(function () {
     }
 
     $("#expense_form").submit(function (event) {
-        console.log("expense_form submitted");
         event.preventDefault();
         var scv, vs, pd;
         if (!$("#payment_date").val()) pd = '2099-12-31';
@@ -667,6 +668,7 @@ $(document).ready(function () {
         else scv = 'N';
         if ($("#voucher_signed").is(':checked')) vs = 'Y';
         else vs = 'N';
+        let expense_type = $("#expense_type").val();
         var formdata = {
             event: $("#event").val(),
             transaction_date: $("#transaction_date").val(),
@@ -683,11 +685,11 @@ $(document).ready(function () {
             voucher_signed: vs,
             bill_number: $("#bill_number").val(),
             brc: $("#brc").val(),
-            payment_intimation_url: $("#payment_intimation_url").val(),
-            payment_date: pd,
-            payment_status: $("#payment_status").val(),
-            payment_confirmation_id: $("#payment_confirmation_id").val(),
-            utr_number: $("#utr_number").val(),
+            payment_intimation_url: ($("#payment_intimation_url").val() === undefined ? "" : $("#payment_intimation_url").val()),
+            payment_date: (expense_type == "KIND" ? $("#transaction_date").val() : pd),
+            payment_status: (expense_type == "KIND" ? "paid" : $("#payment_status").val()),
+            payment_confirmation_id: (expense_type == "KIND" ? "KIND" : $("#payment_confirmation_id").val()),
+            utr_number: (expense_type == "KIND" ? "KIND" : $("#utr_number").val()),
             notes: $("#notes").val(),
             expense_form: 1,
             form_mode: $("#form_mode").val(),
@@ -752,11 +754,8 @@ $(document).ready(function () {
                         + mySub[i].Sub_Category_ID + " " + mySub[i].Sub_Category_Desc + "</option>");
                 }
 
-                console.log('assign subcat start')
                 $("#sub_category option[value=" + myObj[0].subcategory_id + "]").prop('selected', 'true');
-                console.log('assign subcat finish')
                 $("#bill_status option[value=" + myObj[0].bill_status + "]").prop('selected', 'true');
-                console.log('Am i ok')
                 $("#bill_number").val(myObj[0].bill_number);
                 if (myObj[0].soft_copy_voucher == 'Y') $("#soft_copy_voucher").attr("checked", true); else $("#soft_copy_voucher").attr("checked", false);
                 $("#soft_copy_bill").val(myObj[0].soft_copy_bill);
