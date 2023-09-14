@@ -26,27 +26,40 @@ class myBlade extends  BladeOne {
 
 $blade=new myBlade($views,$compiledFolder);
 
-$heading = "Payee Management";
+$heading = "Job Opportunities";
 
-$sql = "SELECT * FROM BSPD_Payee order by Payee_ID desc;";
-$result = mysqli_query($link, $sql);
-$payees = array();
+$sql = "SELECT 
+        *
+        FROM
+        Career_Opportunity C 
+        order by opportunity_id desc";
+$result = mysqli_query($link_test, $sql);
 
 while($row = mysqli_fetch_array($result))
 {
-    $payee = new stdClass();
-    $payee->id = $row["Payee_ID"];
-    $payee->memid = $row["MEMBER_ID"];
-    $payee->name = $row["Name"];
-    $payee->email = $row["Email_ID"];
-    $payee->phno = $row["Phone_Num"];
-    $payees[] = $payee;
+    $post = new stdClass();
+    $post->id = $row["opportunity_id"];
+    $post->header = $row["opp_header"];
+    $post->date = $row["created_at"];
+    $post->description = nl2br($row["opp_description"]);
+    $post->company = $row["company"];
+    $post->phno = $row["contact_phno"];
+    $post->email = $row["contact_email"];
+    $post->notes = $row["contact_notes"];
+    $postby = $row["posted_by"];
+
+    $sql1 = "SELECT Alias FROM BSPD_Member WHERE MEMBER_ID = $postby";
+    $result1 = mysqli_query($link, $sql1);
+    $row1 = mysqli_fetch_array($result1);
+    $post->postby = $row1['Alias'];
+
+    $posts[] = $post;
 }
 
 try {
-    echo $blade->run("payee_account_management"
+    echo $blade->run("careers"
     , ['heading' => $heading
-    ,  'payees' => $payees
+    , 'posts' => $posts
 
 ]);
 } catch (Exception $e) {

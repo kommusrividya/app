@@ -1916,4 +1916,51 @@ $(document).ready(function () {
 
 
     })
+
+    $("#career_form").on('submit', function (event) {
+        event.preventDefault();
+            var formdata = {
+                company: $("#company").val(),
+                phno: $("#phno").val(),
+                email: $("#email").val(),
+                header: $("#header").val(),
+                description: $("#description").val(),
+                notes: $("#notes").val(),
+                career_form: 1,
+            };
+
+            console.log("form", formdata);
+    
+            result = $.ajax({
+                type: "POST",
+                url: "controllers/jquery_process.php",
+                data: formdata,
+            });
+    
+            result.done(function (response) {
+                location.reload();
+                alert(response);
+            });
+    
+            result.fail(function (jqXHR, textStatus, errorThrown) {
+                console.log("fail");
+                // location.reload();
+            });
+    });
+
+    $("#add_post").on('click', function(event) {
+        event.preventDefault();
+        $('#form_section').show();
+        $('#career_feed').hide();
+        $('#add_post').hide();
+        $('#backtofeed').show();
+    });
+
+    $("#backtofeed").on('click', function(event) {
+        event.preventDefault();
+        $('#form_section').hide();
+        $('#career_feed').show();
+        $('#add_post').show();
+        $('#backtofeed').hide();
+    });
 });

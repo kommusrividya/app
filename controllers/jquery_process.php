@@ -1956,3 +1956,19 @@ if(isset($_POST['get_payee_account'])) {
 
 	echo json_encode($row);
 }
+
+if(isset($_POST['career_form'])) {
+	$company = $_POST['company'];
+	$phno = $_POST['phno'];
+	$email = $_POST['email'];
+	$header = $_POST['header'];
+	$description = $_POST['description'];
+	$notes = $_POST['notes'];
+	$postby = $_SESSION['id'];
+
+	$sql = "INSERT INTO `Career_Opportunity` (`posted_by`, `company`, `contact_phno`, `contact_email`, `contact_notes`, `opp_header`, `opp_description`) VALUES ('$postby', '$company', '$phno', '$email', '$notes', '$header', \"$description'\");";
+	if(mysqli_query($link_test, $sql)) {
+			echo "Post Created Successfully.";
+		}
+	else echo "Error".mysqli_error($link_test);
+}
