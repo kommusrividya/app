@@ -1776,6 +1776,23 @@ $(document).ready(function () {
 
     });
 
+    $("#payee_registration_complete").on('click', function (event) {
+        event.preventDefault();
+        $.ajax({
+            url: "controllers/jquery_process.php",
+            type: "POST",
+            datatype: "json",
+            data: {
+                "payee_registration_complete": 1,
+            },
+            success: function (response) {
+                alert(response);
+                location.reload();
+            },
+        });
+
+    });
+
     $("#reverse_in_process").on('click', function (event) {
         event.preventDefault();
         $.ajax({

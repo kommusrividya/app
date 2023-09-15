@@ -63,10 +63,11 @@
     </div>
     <a href="" id="link" download="{{$currentDate1}} Branch Bulk NEFT.csv">Download </a>
     <div class="form-group row">
-        <div class="col-sm-6">
+        <div class="col-sm-12">
         <button class="btn" style="background-color: #812626; color:#FFFFFF;" id="in_process">Mark as in process</button>
         @if($_SESSION['permission'] & PERM_CRUD)
         <button class="btn" style="background-color: #812626; color:#FFFFFF;" id="reverse_in_process">Reverse last batch to pay status</button>
+        <button class="btn" style="background-color: #812626; color:#FFFFFF;" id="payee_registration_complete">Payee registration complete</button>
         @endif
         </div>
     </div>

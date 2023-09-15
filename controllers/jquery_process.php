@@ -1869,7 +1869,7 @@ if(isset($_POST['in_process']))
 	$query = mysqli_query($link, $sql);
 	if($query) $output = "Changed $count records to 'In process' status";
 
-	$sql = "SELECT (pay_count+1) from counters where sno = 1";
+	$sql = "SELECT (pay_count+1) as pay_count from counters where sno = 1";
 	$result = mysqli_query($link_test, $sql);
 	$row = mysqli_fetch_array($result);
 	$pay_count = $row['pay_count'];
@@ -1879,6 +1879,25 @@ if(isset($_POST['in_process']))
 
 	echo $output;
 
+}
+
+if(isset($_POST['payee_registration_complete'])) {
+	$pay_count = 0;
+	$output = "";
+	
+	$sql = "SELECT (pay_count+1) as pay_count from counters where sno = 1";
+	$result = mysqli_query($link_test, $sql);
+	
+	$row = mysqli_fetch_array($result);
+	
+	$pay_count = $row['pay_count'];
+
+	$sql = "UPDATE counters SET pay_count = $pay_count WHERE sno = 1";
+	$result = mysqli_query($link_test, $sql);
+
+	if($result) $output = "File count incremented.";
+
+	echo $output;
 }
 
 if(isset($_POST['reverse_in_process']))
