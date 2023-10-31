@@ -56,6 +56,9 @@ while($row = mysqli_fetch_array($result))
     $posts[] = $post;
 }
 
+$sql = "SELECT distinct Category_ID, Category_Desc FROM BSPD_Transaction_Code_Master where Categroy_Type = 'Classified';";
+
+
 try {
     echo $blade->run("careers"
     , ['heading' => $heading

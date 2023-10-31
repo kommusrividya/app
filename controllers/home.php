@@ -191,7 +191,7 @@ else $ayanam = "దక్షిణాయనే";
     $row = mysqli_fetch_array($query);
     $logins_count = $row['count'];
 
-    $sql = "SELECT count(MEMBER_ID) as count FROM BSPD_Member where Status = '0';";
+    $sql = "SELECT count(MEMBER_ID) as count FROM BSPD_Member where Status = 'Active';";
     $query = mysqli_query($link, $sql);
     $row = mysqli_fetch_array($query);
     $member_count = $row['count'];
@@ -200,6 +200,11 @@ else $ayanam = "దక్షిణాయనే";
     $query = mysqli_query($link, $sql);
     $row = mysqli_fetch_array($query);
     $logins_count_30days = $row['count'];
+
+    $sql = "SELECT count(distinct emp_uid) as count FROM bspd_tokens where createdon > date_sub(now(),interval 1 day);";
+    $query = mysqli_query($link, $sql);
+    $row = mysqli_fetch_array($query);
+    $logins_count_today = $row['count'];
 
 
 try {
@@ -235,6 +240,7 @@ try {
     ,   'logins_count' => $logins_count
     ,   'member_count' => $member_count
     ,   'logins_count_30days' => $logins_count_30days
+    ,   'logins_count_today' => $logins_count_today
 ]);
 } catch (Exception $e) {
     echo "error found ".$e->getMessage()."<br>".$e->getTraceAsString();

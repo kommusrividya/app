@@ -17,6 +17,14 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="assets/css/custom.css">
+    <style>
+        body {
+            -webkit-user-select: none; /* Disable selection on webkit browsers */
+            -moz-user-select: none; /* Disable selection on Mozilla Firefox */
+            -ms-user-select: none; /* Disable selection on Microsoft Internet Explorer */
+            user-select: none; /* Disable selection on non-IE browsers */
+        }
+    </style>
 </head>
 
 <body>
@@ -36,6 +44,7 @@
                     <div class="col-sm-7">
                         <label class="label-control">Select Report Type</label>
                         <br>
+                        @if($_SESSION['permission'] & T100)
                         <label class="radio-inline">
                             <input type="radio" name="report" value="recognition" required>Recognition
                         </label>
@@ -45,6 +54,7 @@
                         <label class="radio-inline">
                             <input type="radio" name="report" value="expenses">Expenses
                         </label>
+                        @endif
                         <label class="radio-inline">
                             <input type="radio" name="report" value="finsum">Financial Summary
                         </label>

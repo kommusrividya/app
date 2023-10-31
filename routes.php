@@ -71,6 +71,7 @@ get('/app/challan', 'controllers/cash_challan.php');
 get('/app/voucherlist', 'controllers/voucherlist.php');
 get('/app/vamsavruksham', 'controllers/vamsa_vruksham.php');
 get('/app/careers', 'controllers/careers.php');
+get('/app/menu', 'controllers/example_menu.php');
 
 
 

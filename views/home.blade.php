@@ -41,6 +41,7 @@
           <h4>Web Statistics</h4>
           <h5>Users from inception:{{ $logins_count }}
           <br>Users in last month: {{ $logins_count_30days }}
+          <br>Logins today: {{ $logins_count_today }}
           <br>Number of members : {{ $member_count }}
           <br>Web user percentage : {{ round((($logins_count/$member_count)*100),2) }}%</h5>
           <h4>Sankalpam Details</h4>

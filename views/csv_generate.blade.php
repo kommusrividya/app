@@ -92,7 +92,7 @@
 		{
       this.href = 'data:text/plain;charset=utf-11,' + encodeURIComponent(txt.innerText);
         };
-      };
+      }; 
 
       window.onload = function() 
 	  {
@@ -111,9 +111,6 @@
       this.href = 'data:text/plain;charset=utf-11,' + encodeURIComponent(result.innerText);
         };
       };
-
-      
- 
     main();
 </script>
 

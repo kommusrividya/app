@@ -26,6 +26,71 @@ require_once "$APPDIR/ssdbconfig.php"?>
     
     <!-- Javascript files -->
     <script src="assets/js/validation.js"></script>
+    <style>
+      body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .navbar {
+            background-color: #812626;
+            display: flex;
+            justify-content: space-between;
+            z-index: 2;
+            position: relative;
+        }
+        .navbar-toggler {
+            background-color: #fff;
+        }
+        .sidebar {
+            position: fixed;
+            height: 100%;
+            width: 250px;
+            background-color: #333;
+            padding-top: 20px;
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(-100%);
+            z-index: 1;
+        }
+        .sidebar.active {
+            transform: translateX(0);
+        }
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #fff;
+            display: block;
+        }
+        .sidebar a:hover {
+            background-color: #444;
+        }
+        .content {
+            margin-left: 0;
+            padding: 20px;
+            transition: margin 0.3s ease-in-out;
+            flex-grow: 1;
+        }
+        .burger-menu {
+            display: none;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            .navbar {
+                justify-content: flex-end;
+            }
+            .burger-menu {
+                display: block;
+                order: -1;
+                margin-right: 10px;
+            }
+            .sidebar {
+                transform: translateX(-100%);
+            }
+        }
+    </style>
 
 </head>
 <body>
@@ -58,9 +123,7 @@ require_once "$APPDIR/ssdbconfig.php"?>
                 </a>
                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                   <li><a class="dropdown-item" href="event_report">Event Registration report</a></li>
-                  @if($_SESSION['permission'] & T100)
                   <li><a class="dropdown-item" href="eventexpreport">Event reports</a></li>
-                  @endif
                   <li><a class="dropdown-item" href="memberreport">Member report</a></li>
                   @if($_SESSION['permission'] & PERM_CRUD)
                   <li><a class="dropdown-item" href="financialsummary">Financial Summary</a></li>
@@ -144,6 +207,13 @@ require_once "$APPDIR/ssdbconfig.php"?>
           </div>
         </div>
       </nav>
+      <script>
+        $(document).ready(function() {
+            $('.burger-menu').click(function() {
+                $('.sidebar').toggleClass('active');
+            });
+        });
+    </script>
       
 </body>
 </html>
