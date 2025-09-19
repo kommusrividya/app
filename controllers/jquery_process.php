@@ -235,9 +235,9 @@ if (isset($_POST["member_creation_form"])) {
 	}
 
 	$sql = "INSERT INTO BSPD_Member 
-	(`Surname`, `Name`, `Gender`, `Year_Of_Birth`, `Gotram_ID`, `Gotram`, `Email_ID`, `Phone_Num`, 
+	(`Surname`, `Name`, `Gender`, `Year_Of_Birth`, `Gotram_ID`, `Email_ID`, `Phone_Num`, 
 	`Referrer_ID`, `DOJ`, `Location`, `BloodGroup`, `Created_By`, `Password`, `Notes`, `DEShCode`) 
-	VALUES ('$last_name', '$first_name', '$gender', '$yob', '$gotram', '$gotram', '$email_id', '$phone_num', 
+	VALUES ('$last_name', '$first_name', '$gender', '$yob', '$gotram', '$email_id', '$phone_num', 
 	'$referrer_id', '" . date("Y-m-d") . "', '$location', '$blood_group', $createdby, md5('$phone_num'), '$notes', '$entity_id');";
 
 	if (mysqli_query($link, $sql)) {
