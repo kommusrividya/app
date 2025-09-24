@@ -3,7 +3,7 @@
 session_start();
 $APPDIR = dirname(dirname(__FILE__));
 require_once "$APPDIR/ssdbconfig.php";
-require 'vendor/autoload.php'; // load PhpSpreadsheet
+include "$APPDIR/vendor/autoload.php"; // load PhpSpreadsheet
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 if (isset($_POST['submit'])) {
