@@ -1,140 +1,103 @@
-<?php 
+<?php
 
 session_start();
-$APPDIR = dirname( dirname(__FILE__) );
-// require_once "$APPDIR/constant.php"; 
+$APPDIR = dirname(dirname(__FILE__));
 require_once "$APPDIR/ssdbconfig.php";
-require_once "$APPDIR/PHPExcelReader/excel_reader.php";
+require 'vendor/autoload.php'; // load PhpSpreadsheet
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
-if(isset($_POST['submit'])) {
+if (isset($_POST['submit'])) {
     UploadBulkTrn($link, $APPDIR);
 }
 
 function UploadBulkTrn($link, $APPDIR)
-    {       
-        echo "function called";
-        // Begin Function UploadBulkTrn`
-        $targetDir = "$APPDIR/NBVInfo/";
-        $fileName = basename($_FILES["file"]["name"]);
-        $targetFilePath = $targetDir . $fileName;
-        $fileType = pathinfo($targetFilePath,PATHINFO_EXTENSION);
-        $AcceptedType = "xls";
-    //Code to ensure the file can be uploaded
-        if ($fileType == $AcceptedType) {}
-        Else { echo "<p style='color:#C5221E'> <strong> Wrong file Type... It should be only XLS. </strong> </p>" ;  return;}
-    //Code to ensure the file can be uploaded    
-        
-        //echo $targetFilePath;
-        $statusMsg = " ";
-       //array_map('unlink', array_filter((array) glob("../uploads/NBVInfo/NBVtest.xls")));
-        array_map('unlink', array_filter((array) glob(".$targetFilePath.")));
+{
+    // Upload setup
 
-        if(move_uploaded_file($_FILES["file"]["tmp_name"], $targetFilePath))  
-        {
-            $statusMsg = "<p style='color:DarkGreen'> <strong>File Uploaded Successfully. </strong> </p>";
-        } else  
-        {
-         
-            $statusMsg = "Sorry, there was an error uploading your file.";
-        }
-        echo $statusMsg;
-        //upload of file completed
-        //Excel data read   
-        $excel = new PhpExcelReader; // creates object instance of the class
-        //echo 'testing1';
-        //echo $fileName;
+    $targetDir = "$APPDIR/NBVInfo/";
+    $fileName = basename($_FILES["file"]["name"]);
+    $targetFilePath = $targetDir . $fileName;
+    $fileType = pathinfo($targetFilePath,PATHINFO_EXTENSION);
 
-        $excel->read($targetFilePath); // reads and stores the excel file data
-        //echo 'testing2';
+    $targetDir = "$APPDIR/NBVInfo/";
 
-        // Test to see the excel data stored in $sheets property
-        //echo '<pre>';
-        //var_export($excel->sheets);
-        //echo '</pre>';
-        //echo 'testing3';
-        //function sheetData($sheet) {
-        function sheetData($link, $sheet) 
-        {   // Begin sheetData function 
-            $re = '<table>'; // starts html table
-            $x = 3;
-            while($x <= $sheet['numRows']) 
-            {
-            $re .= "<tr>\n";
-            $y = 1;
-                while($y <= $sheet['numCols']) 
-                {
-                $cell = isset($sheet['cells'][$x][$y]) ? $sheet['cells'][$x][$y] : '';
-                $re .= " <td>$cell</td>\n"; 
-                //Code added by Prasad
-                if ($y == "1")  {  $OrgID = $cell ;    }
-                if ($y == "2")  {  $SlNo = $cell;      }
-                if ($y == "3")  {  $ID = $cell;        }
-                if ($y == "4")  {  $Name = $cell;      }
-                if ($y == "5")  {  $TrnID = $cell;     }
-                if ($y == "6")  {  $TrnDate = $cell;   }
-                if ($y == "7")  {  $TrnAmt = $cell;    }
-                if ($y == "8")  {  $Source = $cell;    }
+    // Accept only xls or xlsx
 
- //               echo "C" .$x. "D" .$cell;
-                //Code add complete by Prasad
-                $y++;
-                } 
-        
-            $re .= "</tr>\n";
-            //Code add  by Prasad
-            // echo "A" .$ContributerID;   // echo "B" .$Amount;
-            $sqlquery = "SELECT * FROM BSPD_SIB_Collection_Report WHERE SLNO = '" .trim($SlNo)."'";
-//             echo $sqlquery;
-            $result = mysqli_query($link, $sqlquery); 
-//            echo $result;
+    if (!in_array($fileType, ["xls", "xlsx"])) {
+        echo "<p style='color:#C5221E'><strong> Wrong file type. Only XLS or XLSX allowed. </strong></p>";
+        return;
+    }
+
+    // Remove any old files with same name
+    @unlink($targetFilePath);
+    
+    if (move_uploaded_file($_FILES["file"]["tmp_name"], $targetFilePath)) {
+        echo "<p style='color:DarkGreen'><strong>File Uploaded Successfully.</strong></p>";
+    } else {
+        echo "<p style='color:#C5221E'><strong>Sorry, there was an error uploading your file.</strong></p>";
+        return;
+    }
+
+    // ✅ Use PhpSpreadsheet to read both XLS and XLSX
+    try {
+        $spreadsheet = IOFactory::load($targetFilePath);
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $x = 3; // start from row 3 (your original logic)
+        foreach ($sheet->getRowIterator($x) as $row) {
+            $cells = [];
+            foreach ($row->getCellIterator() as $cell) {
+                $cells[] = trim($cell->getValue());
+            }
+
+            // Map values (match your original column mapping)
+            $OrgID   = $cells[0] ?? '';
+            $SlNo    = $cells[1] ?? '';
+            $ID      = $cells[2] ?? '';
+            $Name    = $cells[3] ?? '';
+            $TrnID   = $cells[4] ?? '';
+            $TrnDate = $cells[5] ?? '';
+            $TrnAmt  = $cells[6] ?? '';
+            $Source  = $cells[7] ?? '';
+
+            if (empty($SlNo)) {
+                continue; // skip empty rows
+            }
+
+            // Check if row exists
+            $sqlquery = "SELECT * FROM BSPD_SIB_Collection_Report WHERE SLNO = '" . mysqli_real_escape_string($link, $SlNo) . "'";
+            $result = mysqli_query($link, $sqlquery);
             $row = mysqli_fetch_array($result);
-//            echo $row;
-            $Name1 =$row['SLNO'];
-//            echo 'testing' .$Name1;
-//            echo 'first' .trim($SlNo);
-//            if (is_null($Name1)) 
-            if ($Name1 != trim($SlNo))
-            {
-            $sqlins = "INSERT INTO BSPD_SIB_Collection_Report (ORGNAME, SLNO, ID, NAME, TRANID, TRANDATE, TRANAMT, SOURCE) " ."SELECT 
-            '".trim($OrgID). "','" .trim($SlNo). "','" .trim($ID). "','" .trim($Name). "','" .trim($TrnID). "','" .trim($TrnDate). "'," .trim($TrnAmt). ",'" .trim($Source). "'";                     
-              if(mysqli_query($link, $sqlins)){  echo "Records were inserted successfully" .$SlNo ; echo "<br>" ; } 
-           //   if(mysqli_query($link, $sqlins)){ } 
-              else { echo "ERROR: Could not able to execute $sqlins. " . mysqli_error($link); echo "<br>" ;}
+
+            if (!$row) {
+                $sqlins = "INSERT INTO BSPD_SIB_Collection_Report 
+                           (ORGNAME, SLNO, ID, NAME, TRANID, TRANDATE, TRANAMT, SOURCE) 
+                           VALUES (
+                               '" . mysqli_real_escape_string($link, $OrgID) . "',
+                               '" . mysqli_real_escape_string($link, $SlNo) . "',
+                               '" . mysqli_real_escape_string($link, $ID) . "',
+                               '" . mysqli_real_escape_string($link, $Name) . "',
+                               '" . mysqli_real_escape_string($link, $TrnID) . "',
+                               '" . mysqli_real_escape_string($link, $TrnDate) . "',
+                               '" . mysqli_real_escape_string($link, $TrnAmt) . "',
+                               '" . mysqli_real_escape_string($link, $Source) . "'
+                           )";
+
+                if (mysqli_query($link, $sqlins)) {
+                    echo "Records were inserted successfully (SLNO: $SlNo)<br>";
+                } else {
+                    echo "ERROR inserting SLNO $SlNo: " . mysqli_error($link) . "<br>";
+                }
+            } else {
+                echo "Row already exists (SLNO: $SlNo)<br>";
             }
-            else
-            { echo "Row already exists" .$SlNo ;  echo "<br>" ; }
-             
-            
- 
-            //Code add complete by Prasad
-            $x++;
-            }
-
-        return $re .'</table>'; // ends and returns the html table
-        }  // End of sheetData function 
-
-
-        $nr_sheets = count($excel->sheets); // gets the number of worksheets
-        //code by Prasad
-        $nr_sheets = 1 ; //Modified by Prasad to ensure only one sheet is read
-        //code end by Prasad
-        $excel_data = ''; // to store the the html tables with data of each sheet
-
-        // traverses the number of sheets and sets html table with each sheet data in $excel_data
-        for($i=0; $i<$nr_sheets; $i++) 
-        {    // Begin  for loop for the sheets - May be we should stop with just 1 sheet?  - Madhu & Prasad
-        //$excel_data .= '<h4>Sheet '. ($i + 1) .' (<em>'. $excel->boundsheets[$i]['name'] .'</em>)</h4>'. sheetData($excel->sheets[$i]) .'<br/>'; 
-        $excel_data .= '<h4>Sheet '. ($i + 1) .' (<em>'. $excel->boundsheets[$i]['name'] .'</em>)</h4>'. sheetData($link, $excel->sheets[$i]) .'<br/>'; 
-        }  // End for loop for the sheets 
-
-        //echo $excel_data; // outputs HTML tables with excel file data
-
-        //Excel Data read end
-
-    } 
-
+        }
+    } catch (Exception $e) {
+        echo 'Error reading file: ', $e->getMessage();
+    }
+}
 ?>
-<?php // require_once("$APPDIR/views/header.blade.php") ?>
+
 <!DOCTYPE html>
 <html>
 <head>

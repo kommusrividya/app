@@ -72,7 +72,7 @@ get('/app/vamsavruksham', 'controllers/vamsa_vruksham.php');
 get('/app/recognition', 'controllers/recognition_probables.php');
 get('/app/careers', 'controllers/careers.php');
 get('/app/pendingbills', 'controllers/pending_bills.php');
-
+get('/app/readxlsx', 'controllers/read_xlsx.php');
 
 
 

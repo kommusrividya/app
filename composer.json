@@ -10,7 +10,8 @@
         "guzzlehttp/guzzle": "^7.1",
         "guzzlehttp/psr7": "^1.7",
 	"illuminate/database": "^8.62",
-        "illuminate/events": "^8.62"
+        "illuminate/events": "^8.62",
+        "phpoffice/phpspreadsheet": "1.28"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2"
