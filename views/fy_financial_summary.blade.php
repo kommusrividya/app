@@ -37,8 +37,18 @@
                 <tr>
                     <td>
                         <table class="table">
-                            <tr><td>Contributions (B)</td><td align="right"><input type="text" style="border:0;text-align: right;" id="contributions" readonly value="{{ number_format((float)$contributions['Amount'], 2, '.', '') }}"></td></tr>
-                            <tr><td>Kind Contribution</td><td align="right"><input type="text" style="border:0;text-align: right;" id="kind_contribution" readonly value="{{ number_format((float)$kind_contribution['Amount'], 2, '.', '') }}"></td></tr>
+                            <tr><td>Contributions(B)</td><td align="right"><input type="text" style="border:0;text-align: right;" id="contributions" readonly value="{{ number_format((float)$contributions['Amount'], 2, '.', '') }}"></td></tr>
+                            <tr>
+                                <td>Kind Contribution</td>
+                                <td align="right">
+                                    @foreach($kind_contribution_breakup as $item)
+                                        {{ $item['EVENT_ID'] }} - {{ $item['Amount'] }}<br>
+                                    @endforeach
+                                    <input type="text" style="border:0;text-align: right;" id="kind_contribution" readonly value="{{ number_format((float)$kind_contribution['Amount'], 2, '.', '') }}"><br>
+                                </td>
+                            </tr>
+                            
+                            
                             <tr><td>SIB Interest (E)</td><td align="right"><input type="text" style="border:0;text-align: right;" id="sib_interest" readonly value="{{ number_format((float)$sib_interest['Amount'], 2, '.', '') }}"></td></tr>
                             <tr><td>Kind (Pending upload) (C)</td><td align="right"><input type="text" style="border:0;text-align: right;" id="kind_discrepency" readonly value="{{ number_format((float)$kind_expenses['Amount']-$kind_contribution['Amount'], 2, '.', '')  }}"></td></tr>
                             <tr><td>Contributions not yet uploaded(D)</td><td align="right"><input type = "text" name = "contribution_not_uploaded" style="text-align: right;" value="0" id = "contribution_not_uploaded" required></td></tr>
@@ -47,7 +57,15 @@
                     <td>
                     <table class="table">
                         <tr><td>FDs (a)</td><td align="right"><input type="text" style="border:0;text-align: right;" id="corpusFund" readonly value="{{ number_format((float)$corpusFund['Amount'], 2, '.', '') }}"></td></tr>
-                        <tr><td>Kind Expenses</td><td align="right"><input type="text" style="border:0;text-align: right;" id="kind_expenses" readonly value="{{ number_format((float)$kind_expenses['Amount'], 2, '.', '') }}"> </td></tr>        
+                        <tr>
+                            <td>Kind Expenses</td>
+                            <td align="right">
+                                @foreach($kind_expense_breakup as $item)
+                                    {{ $item['EVENT_ID'] }} - {{ $item['Amount'] }}.00<br>
+                                @endforeach
+                                <input type="text" style="border:0;text-align: right;" id="kind_expenses" readonly value="{{ number_format((float)$kind_expenses['Amount'], 2, '.', '') }}"> 
+                            </td>
+                        </tr>        
                         <tr><td>Bank Charges (b)</td><td align="right"><input type="text" style="border:0;text-align: right;" id="bank_charges" readonly value="{{ number_format((float)$bank_charges['Amount'], 2, '.', '') }}"> </td></tr>
                         <tr><td>Expenses Paid (c)</td><td align="right"><input type="text" style="border:0;text-align: right;" id="expenses_paid" readonly value="{{ number_format((float)$expenses_paid['Amount'], 2, '.', '') }}"> </td></tr>
                     </table>

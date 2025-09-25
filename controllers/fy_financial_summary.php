@@ -73,10 +73,26 @@ $result = mysqli_query($link, $sql);
 
 $kind_expenses = mysqli_fetch_array($result);
 
+$sql = "SELECT EVENT_ID, sum(Amount) as Amount FROM bspdhyd_wp1.BSPD_Expenses where Payment_Date BETWEEN ".FINANCIALYEAR." and Expense_Type='KIND' and payment_status='paid' GROUP BY EVENT_ID;";
+$result = mysqli_query($link, $sql);
+
+$kind_expense_breakup = [];
+while($row = mysqli_fetch_array($result)) {
+    $kind_expense_breakup[] = $row;
+}
+
 $sql = "SELECT Sum(Amount) as Amount FROM bspdhyd_wp1.BSPD_Member_Contribution where Contribution_Date BETWEEN ".FINANCIALYEAR." and Contribution_Type='KIND';";
 $result = mysqli_query($link, $sql);
 
 $kind_contribution = mysqli_fetch_array($result);
+
+$sql = "SELECT EVENT_ID, Sum(Amount) as Amount FROM bspdhyd_wp1.BSPD_Member_Contribution where Contribution_Date BETWEEN ".FINANCIALYEAR." and Contribution_Type='KIND' GROUP BY EVENT_ID;";
+$result = mysqli_query($link, $sql);
+
+$kind_contribution_breakup = [];
+while($row = mysqli_fetch_array($result)) {
+    $kind_contribution_breakup[] = $row;
+}
 
 $sql = "SELECT sum(Amount) as Amount FROM bspdhyd_wp1.BSPD_Temp_SIB_OtherData where Date BETWEEN ".FINANCIALYEAR." and Type='BankCharge';";
 $result = mysqli_query($link, $sql);
@@ -115,6 +131,8 @@ try {
     ,  'currentDate' => $currentDate
     ,  'sib_interest' => $sib_interest
     ,  'provisioned' => $provisioned
+    ,  'kind_contribution_breakup' => $kind_contribution_breakup
+    ,  'kind_expense_breakup' => $kind_expense_breakup
 
 ]);
 } catch (Exception $e) {
